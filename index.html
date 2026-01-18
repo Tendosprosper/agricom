@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agricom | Smart Agriculture Market</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<style>
+:root{
+  --g-dark:#0f3d1e;
+  --g:#2e7d32;
+  --g-light:#66bb6a;
+  --glass:rgba(255,255,255,.18);
+  --border:rgba(255,255,255,.35);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,sans-serif}
+body{background:#f4f7f5;overflow-x:hidden}
+
+/* NAVBAR */
+header{
+  position:fixed;top:0;width:100%;z-index:999;
+  background:rgba(10,50,25,.75);
+  backdrop-filter:blur(12px);
+}
+nav{
+  max-width:1300px;margin:auto;
+  padding:15px 25px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.logo{color:#eaffea;font-size:24px;font-weight:700}
+.menu{display:flex;gap:28px}
+.menu a{color:#eaffea;text-decoration:none;display:flex;gap:6px}
+.menu a:hover{color:var(--g-light)}
+.menu-btn{display:none;color:#fff;font-size:24px}
+
+/* MOBILE */
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:none;z-index:998;
+}
+.overlay.active{display:block}
+.panel{
+  width:260px;height:100%;background:#0f3d1e;
+  padding:30px;animation:slide .3s ease;
+}
+.panel a{display:block;color:#fff;margin:20px 0;text-decoration:none}
+@keyframes slide{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  background:
+   linear-gradient(rgba(10,50,25,.8),rgba(10,50,25,.9)),
+   url("https://images.unsplash.com/photo-1501004318641-b39e6451bec6");
+  background-size:cover;display:flex;align-items:center;
+}
+.hero-content{
+  max-width:1200px;margin:auto;padding:120px 25px;color:#fff;
+}
+.hero h1{font-size:52px;max-width:720px}
+.hero p{margin:20px 0;max-width:600px}
+.hero button{
+  padding:14px 34px;border:none;border-radius:30px;
+  background:linear-gradient(45deg,var(--g-light),var(--g));
+  color:#fff;font-size:16px;
+}
+
+/* SECTIONS */
+section{padding:90px 25px}
+.container{max-width:1200px;margin:auto}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:35px}
+
+/* GLASS CARDS */
+.card{
+  background:linear-gradient(135deg,rgba(255,255,255,.25),rgba(255,255,255,.1));
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  padding:35px;border-radius:22px;
+  box-shadow:0 25px 50px rgba(0,0,0,.2);
+  transition:.4s;
+}
+.card:hover{transform:translateY(-10px)}
+.card i{font-size:36px;color:var(--g);margin-bottom:12px}
+
+/* PRODUCTS */
+.products{background:#eef5f0}
+.product{
+  background:#fff;border-radius:20px;
+  box-shadow:0 15px 35px rgba(0,0,0,.15);
+  overflow:hidden;transition:.4s;
+}
+.product:hover{transform:scale(1.05)}
+.product img{width:100%;height:180px;object-fit:cover}
+.product div{padding:20px}
+.product h4{color:var(--g-dark)}
+.product span{color:var(--g);font-weight:600}
+
+/* STATS */
+.stats{display:flex;justify-content:space-around;text-align:center}
+.stat h2{color:var(--g-dark);font-size:38px}
+
+/* MAP */
+/* SMALL ROUND MAP */
+.map-section{
+  background:#0f3d1e;
+  color:#fff;
+  text-align:center;
+}
+
+.map-frame{
+  width:240px;
+  height:240px;
+  margin:35px auto;
+  border-radius:50%;
+  padding:8px;
+  background:linear-gradient(145deg,#66bb6a,#2e7d32);
+  box-shadow:
+    0 0 0 6px rgba(255,255,255,.25),
+    0 0 40px rgba(102,187,106,.8);
+}
+
+.map-inner{
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  overflow:hidden;
+  background:#fff;
+}
+@media(max-width:480px){
+  .map-frame{
+    width:200px;
+    height:200px;
+  }
+}
+
+
+#map{
+  width:100%;
+  height:100%;
+}
+
+
+/* FOOTER */
+footer{background:#082714;color:#cde8d3;padding:40px;text-align:center}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .menu{display:none}
+  .menu-btn{display:block}
+  .hero h1{font-size:40px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<nav>
+  <div class="logo"><i class="fa-solid fa-leaf"></i> Agricom</div>
+  <div class="menu">
+    <a href="#"><i class="fa-solid fa-house"></i>Home</a>
+    <a href="#"><i class="fa-solid fa-basket-shopping"></i>Market</a>
+    <a href="#"><i class="fa-solid fa-seedling"></i>Farmers</a>
+    <a href="#"><i class="fa-solid fa-phone"></i>Contact</a>
+  </div>
+  <i class="fa-solid fa-bars menu-btn" onclick="openMenu()"></i>
+</nav>
+</header>
+
+<div class="overlay" id="menu" onclick="closeMenu(event)">
+  <div class="panel">
+    <a href="#"><i class="fa-solid fa-house"></i> Home</a>
+    <a href="#"><i class="fa-solid fa-basket-shopping"></i> Market</a>
+    <a href="#"><i class="fa-solid fa-seedling"></i> Farmers</a>
+    <a href="#"><i class="fa-solid fa-phone"></i> Contact</a>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-content">
+    <h1>Connecting You to Farmers Near You</h1>
+    <p>Smart location-powered agriculture marketplace across Uganda.</p>
+    <button>Find Farmers Near Me</button>
+  </div>
+</section>
+
+<section>
+<div class="container stats">
+  <div class="stat"><h2>320+</h2><p>Farmers</p></div>
+  <div class="stat"><h2>1,200+</h2><p>Products</p></div>
+  <div class="stat"><h2>85</h2><p>Districts</p></div>
+</div>
+</section>
+
+<section>
+<div class="container grid">
+  <div class="card"><i class="fa-solid fa-tractor"></i><h3>Smart Farming</h3></div>
+  <div class="card"><i class="fa-solid fa-carrot"></i><h3>Fresh Produce</h3></div>
+  <div class="card"><i class="fa-solid fa-location-dot"></i><h3>Nearby Farmers</h3></div>
+</div>
+</section>
+
+<section class="products">
+<div class="container grid">
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1518977676601-b53f82aba655">
+    <div><h4>Tomatoes</h4><span>UGX 3,000 / Kg</span></div>
+  </div>
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1582515073490-dc0c4d1b5f9a">
+    <div><h4>Carrots</h4><span>UGX 2,500 / Kg</span></div>
+  </div>
+  <div class="product">
+    <img src="https://images.unsplash.com/photo-1567306226416-28f0efdc88ce">
+    <div><h4>Apples</h4><span>UGX 4,000 / Kg</span></div>
+  </div>
+</div>
+</section>
+
+<section class="map-section">
+    <h2>Live Farmer Locator</h2>
+    <p>Smart circular GPS map linking you to nearby farmers</p>
+  
+    <div class="map-frame">
+      <div class="map-inner">
+        <div id="map"></div>
+      </div>
+    </div>
+  </section>
+  
+
+<footer>© 2026 Agricom – Smart Agriculture Platform</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+function openMenu(){document.getElementById("menu").classList.add("active")}
+function closeMenu(e){if(e.target.id==="menu")menu.classList.remove("active")}
+
+const farmers=[
+ {name:"John Okello",lat:0.3476,lng:32.5825},
+ {name:"Mary Nabirye",lat:0.3136,lng:32.5811}
+];
+
+const map=L.map('map',{zoomControl:false}).setView([1.3733,32.2903],7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+navigator.geolocation.getCurrentPosition(pos=>{
+ const uLat=pos.coords.latitude,uLng=pos.coords.longitude;
+ map.setView([uLat,uLng],11);
+ L.circleMarker([uLat,uLng],{radius:7,color:"#fff",fillColor:"#2e7d32",fillOpacity:1}).addTo(map);
+ farmers.forEach(f=>{
+   L.marker([f.lat,f.lng]).addTo(map).bindPopup(f.name);
+ });
+});
+</script>
+
+</body>
+</html>
