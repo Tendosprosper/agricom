@@ -18,7 +18,7 @@
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins,system-ui}
 body{background:#0c2415;color:#eaffea;overflow-x:hidden}
 
-/* ===== SCROLL ANIMATION ===== */
+
 .reveal{
   opacity:0;
   transform:translateY(50px) scale(.96);
@@ -220,12 +220,12 @@ footer{text-align:center;padding:40px;color:#cde8d3;font-size:14px}
   <i class="fa-solid fa-bars menu-btn" onclick="toggleMenu()"></i>
 </header>
 
-<!-- <div class="mobile-menu glass">
+<div class="mobile-menu glass">
   <a href="#" class="liquid">Home</a>
   <a href="#" class="liquid">Market</a>
   <a href="#" class="liquid">Farmers</a>
   <a href="#" class="liquid">Contact</a>
-</div> -->
+</div>
 
 <section class="hero">
   <div class="hero-content reveal">
@@ -264,7 +264,7 @@ footer{text-align:center;padding:40px;color:#cde8d3;font-size:14px}
       <div class="glass liquid"><i class="fa-solid fa-location-dot"></i><h4>Nearby Trade</h4></div>
       <div class="glass liquid"><i class="fa-solid fa-truck"></i><h4>Fast Delivery</h4></div>
       <div class="glass liquid"><i class="fa-solid fa-handshake"></i><h4>Buy Fresh</h4></div>
-      <div class="glass liquid"><i class="fa-solid fa-leaf"></i><h4>Sale Fresh</h4></div>
+      <div class="glass liquid"><i class="fa-solid fa-leaf"></i><h4>Sale</h4></div>
     </div>
   </div>
 
@@ -296,14 +296,14 @@ document.querySelectorAll(".reveal").forEach(el=>observer.observe(el));
 const mobileMenu=document.querySelector(".mobile-menu");
 function toggleMenu(){mobileMenu.classList.toggle("active")}
 
-/* Liquid rip *
-// document.querySelectorAll(".liquid").forEach(el=>{
-//   el.addEventListener("mousemove",e=>{
-//     const r=el.getBoundingClientRect();
-//     el.style.setProperty("--x",`${e.clientX-r.left}px`);
-//     el.style.setProperty("--y",`${e.clientY-r.top}px`);
-//   });
-// });
+/* Liquid ripple */
+document.querySelectorAll(".liquid").forEach(el=>{
+  el.addEventListener("mousemove",e=>{
+    const r=el.getBoundingClientRect();
+    el.style.setProperty("--x",`${e.clientX-r.left}px`);
+    el.style.setProperty("--y",`${e.clientY-r.top}px`);
+  });
+});
 </script>
 
 </body>
